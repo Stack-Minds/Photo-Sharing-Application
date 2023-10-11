@@ -1,27 +1,40 @@
+
 import React from 'react';
 import {
-  Typography
+  Typography, Grid, Card, CardContent, Link
 } from '@mui/material';
 import './userDetail.css';
+import { Link as RouterLink } from 'react-router-dom';
 
-
-/**
- * Define UserDetail, a React component of project #5
- */
 class UserDetail extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
+    const userId = this.props.match.params.userId;
+    const user = window.models.userModel(userId);
+
+    if (!user) {
+      return <Typography variant="h5">User not found</Typography>;
+    }
+
     return (
-      <Typography variant="body1">
-        This should be the UserDetail view of the PhotoShare app. Since
-        it is invoked from React Router the params from the route will be
-        in property match. So this should show details of user:
-        {this.props.match.params.userId}. You can fetch the model for the
-        user from window.models.userModel(userId).
-      </Typography>
+      <Card variant="outlined">
+        <CardContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h5">{`${user.first_name} ${user.last_name}`}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Typography variant="body1">Location: {user.location}</Typography>
+              <Typography variant="body1">Description: {user.description}</Typography>
+              <Typography variant="body1">Occupation: {user.occupation}</Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <Link component={RouterLink} to={`/photos/${user._id}`}>
+                View Photos
+              </Link>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
     );
   }
 }

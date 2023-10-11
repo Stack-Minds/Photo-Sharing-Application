@@ -1,32 +1,53 @@
+
 import React from 'react';
 import {
-  Typography
+  // eslint-disable-next-line no-unused-vars
+  Typography, Grid, Card, CardContent, CardMedia, CardActions, Link
 } from '@mui/material';
 import './userPhotos.css';
+import { Link as RouterLink } from 'react-router-dom';
 
-
-/**
- * Define UserPhotos, a React componment of project #5
- */
 class UserPhotos extends React.Component {
-  constructor(props) {
-    super(props);
-
-  }
-
   render() {
-    return (
-      <Typography variant="body1">
-      This should be the UserPhotos view of the PhotoShare app. Since
-      it is invoked from React Router the params from the route will be
-      in property match. So this should show details of user:
-      {this.props.match.params.userId}. You can fetch the model for the user from
-      window.models.photoOfUserModel(userId):
-        <Typography variant="caption">
-          {JSON.stringify(window.models.photoOfUserModel(this.props.match.params.userId))}
-        </Typography>
-      </Typography>
+    const userId = this.props.match.params.userId;
+    const photos = window.models.photoOfUserModel(userId);
+    const user = window.models.userModel(userId);
 
+    if (!photos || !user) {
+      return <Typography variant="h5">Photos or User not found</Typography>;
+    }
+
+    return (
+      <Grid container spacing={2}>
+        {photos.map(photo => (
+          <Grid item xs={12} md={6} key={photo._id}>
+            <Card variant="outlined">
+              <CardMedia
+                component="img"
+                alt={`Photo by ${user.first_name} ${user.last_name}`}
+                height="300"
+                image={`/images/${photo.file_name}`}
+                title={`Photo by ${user.first_name} ${user.last_name}`}
+              />
+              <CardContent>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {photo.date_time}
+                </Typography>
+                {photo.comments.map(comment => (
+                  <div key={comment._id}>
+                    <Link component={RouterLink} to={`/users/${comment.user._id}`}>
+                      {`${comment.user.first_name} ${comment.user.last_name}`}
+                    </Link>
+                    <Typography variant="body2" color="textSecondary" component="p">
+                      {comment.date_time}: {comment.comment}
+                    </Typography>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     );
   }
 }
