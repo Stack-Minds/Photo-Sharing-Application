@@ -3,6 +3,7 @@ import {
   AppBar, Toolbar, Typography, Box
 } from '@mui/material';
 import './TopBar.css';
+import fetchModel from '../../lib/fetchModelData.js';
 
 class TopBar extends React.Component {
   constructor(props) {
@@ -30,7 +31,7 @@ class TopBar extends React.Component {
       <AppBar className="topbar-appBar" position="absolute">
         <Toolbar>
           <Typography variant="h5" color="inherit" style={{ flexGrow: 1 }}>
-            Stackminds
+            StackMinds
           </Typography>
           <Box display={{ xs: 'none', sm: 'block' }}>
             <Typography variant="h6" color="inherit">
