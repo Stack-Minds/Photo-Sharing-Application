@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  AppBar, Toolbar, Typography, Box
+  AppBar, Toolbar, Typography
 } from '@mui/material';
 import './TopBar.css';
 import fetchModel from '../../lib/fetchModelData.js';
