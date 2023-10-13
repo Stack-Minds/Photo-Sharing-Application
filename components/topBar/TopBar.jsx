@@ -8,14 +8,14 @@ import fetchModel from '../../lib/fetchModelData.js';
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { user : {}, };
+    this.state = { version: null };
   }
 
   componentDidMount() {
     fetchModel('/test/info')
       .then((response) => {
-        let version = response['data']['__v'];
-        this.setState({ version : version });
+        let version = response.data.__v;
+        this.setState({ version: version });
       })
       .catch((e) => {
         console.log(e);
@@ -29,12 +29,9 @@ class TopBar extends React.Component {
       title = "Home";
     } else if (location.startsWith("/users/")) {
       const userId = location.split("/")[2];
-      const user = window.models.userModel(userId);
-      title = user ? `${user.first_name} ${user.last_name}` : "User Not Found";
+      title = `User Profile (ID: ${userId})`;
     } else if (location.startsWith("/photos/")) {
-      const userId = location.split("/")[2];
-      const user = window.models.userModel(userId);
-      title = user ? `Photos of ${user.first_name} ${user.last_name}` : "Photos Not Found";
+      title = "Photos";
     } else {
       title = "Unknown";
     }
@@ -45,11 +42,12 @@ class TopBar extends React.Component {
           <Typography variant="h5" color="inherit" style={{ flexGrow: 1 }}>
             StackMinds
           </Typography>
-          <Box display={{ xs: 'none', sm: 'block' }}>
-            <Typography variant="h6" color="inherit">
-              {title}
-            </Typography>
-          </Box>
+          <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} color="inherit">
+            {title}
+          </Typography>
+          <Typography variant="h5" component="div" color="inherit">
+            Version: {this.state.version}
+          </Typography>
         </Toolbar>
       </AppBar>
     );
