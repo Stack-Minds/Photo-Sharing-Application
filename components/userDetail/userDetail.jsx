@@ -1,29 +1,36 @@
-
 import React from 'react';
 import {
   Typography, Grid, Card, CardContent, Link
 } from '@mui/material';
 import './userDetail.css';
 import { Link as RouterLink } from 'react-router-dom';
-import {HashRouter as Router} from 'react-router-dom';
 import fetchModel from '../../lib/fetchModelData.js';
 
 class UserDetail extends React.Component {
+  _isMounted = false;
+
   constructor(props) {
     super(props);
-    this.state = { user : {}, };
+    this.state = { user: {} };
   }
 
   componentDidMount() {
+    this._isMounted = true;
     this.componentDidUpdate();
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   componentDidUpdate() {
     let userId = this.props.match.params.userId;
     fetchModel(`/user/${userId}`)
       .then((response) => {
-        let user = response['data'];
-        this.setState({ user : user });
+        if (this._isMounted) {
+          let user = response.data;
+          this.setState({ user: user });
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -31,8 +38,7 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    const userId = this.props.match.params.userId;
-    const user = window.models.userModel(userId);
+    const { user } = this.state;
 
     if (!user) {
       return <Typography variant="h5">User not found</Typography>;
