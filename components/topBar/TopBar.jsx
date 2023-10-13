@@ -8,6 +8,7 @@ import fetchModel from '../../lib/fetchModelData.js';
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { user : {}, };
   }
 
   componentDidMount() {
