@@ -1,51 +1,49 @@
-import React from 'react';
+import React, { Component } from 'react';
+import { List, ListItem, ListItemText } from '@mui/material';
 import { Link } from 'react-router-dom';
-import {HashRouter as Router} from 'react-router-dom';
-import fetchModel from '../../lib/fetchModelData.js';
+import { fetchModel } from '../../lib/fetchModelData';
 
-class UserList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { users : [], };
-    }
+class UserList extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      users: [],
+    };
+  }
 
-    addUserName(user) {
-        if (!user) return "";
-        return user.first_name + " " + user.last_name;
-    }
+  componentDidMount() {
+    this.fetchUserList();
+  }
 
-    addList() {
-        return (
-          this.state.users.map((user) =>
-              <ListItem divider={true} key={user._id}>
-                <Link to={"/users/" + user._id} className="user-list-item">
-                  <ListItemText primary={this.addUserName(user)} />
-                </Link>
-              </ListItem>
-          )
-        );
-    }
+  fetchUserList() {
+    fetchModel('/user/list')
+      .then((response) => {
+        const users = response.data;
+        this.setState({ users });
+      })
+      .catch((error) => {
+        console.error('Error fetching user list:', error);
+      });
+  }
 
-    componentDidMount() {
-        fetchModel('/user/list')
-          .then((response) => {
-            let users = response['data'];
-            this.setState({ users : users });
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-    }
+  addUserName(user) {
+    if (!user) return '';
+    return user.first_name + ' ' + user.last_name;
+  }
 
-    render() {
-        return (
-          <Router>
-            <List component="nav">
-              {this.addList()}
-            </List>
-          </Router>
-        );
-    }
+  render() {
+    return (
+      <List component="nav">
+        {this.state.users.map((user) => (
+          <ListItem divider={true} key={user._id}>
+            <Link to={`/users/${user._id}`} className="user-list-item">
+              <ListItemText primary={this.addUserName(user)} />
+            </Link>
+          </ListItem>
+        ))}
+      </List>
+    );
+  }
 }
 
 export default UserList;
