@@ -1,11 +1,12 @@
-# Srum Team
+# Scrum Team
 ## Product Owner:
 Pallavi Deshmukh 
 ## Scrum Master:
 Venkata Avinash Mallampati
-## Developers
+## Developers:
 - Pallavi Deshmukh
 - Venkata Avinash Mallampati
 - Praharsha Srikar Kadambari
 - Adarsh Kodumuru
-- sai pallavi vangala
+- Sai Pallavi Vangala
+- Supraj Bejugam
