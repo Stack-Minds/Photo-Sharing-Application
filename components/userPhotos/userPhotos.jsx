@@ -1,11 +1,10 @@
-
 import React from 'react';
 import {
-  // eslint-disable-next-line no-unused-vars
   Typography, Grid, Card, CardContent, CardMedia, CardActions, Link
 } from '@mui/material';
 import './userPhotos.css';
 import { Link as RouterLink } from 'react-router-dom';
+import fetchModel from '../../lib/fetchModelData.js';
 
 class UserPhotos extends React.Component {
   render() {
