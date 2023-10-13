@@ -1,24 +1,54 @@
 import React from 'react';
 import {
-  Typography, Grid, Card, CardContent, CardMedia, CardActions, Link
+  Typography, Grid, Card, CardContent, CardMedia, Link
 } from '@mui/material';
-import './userPhotos.css';
 import { Link as RouterLink } from 'react-router-dom';
 import fetchModel from '../../lib/fetchModelData.js';
 
 class UserPhotos extends React.Component {
-  render() {
-    const userId = this.props.match.params.userId;
-    const photos = window.models.photoOfUserModel(userId);
-    const user = window.models.userModel(userId);
+  constructor(props) {
+    super(props);
+    this.state = {
+      user: {},
+      photos: [],
+    };
+  }
 
-    if (!photos || !user) {
+  componentDidMount() {
+    this.fetchUserData();
+  }
+
+  fetchUserData() {
+    const userId = this.props.match.params.userId;
+    fetchModel(`/user/${userId}`)
+      .then((response) => {
+        const user = response.data;
+        this.setState({ user });
+      })
+      .catch((error) => {
+        console.error('Error fetching user data:', error);
+      });
+
+    fetchModel(`/photosOfUser/${userId}`)
+      .then((response) => {
+        const photos = response.data;
+        this.setState({ photos });
+      })
+      .catch((error) => {
+        console.error('Error fetching user photos:', error);
+      });
+  }
+
+  render() {
+    const { user, photos } = this.state;
+
+    if (!user || !photos) {
       return <Typography variant="h5">Photos or User not found</Typography>;
     }
 
     return (
       <Grid container spacing={2}>
-        {photos.map(photo => (
+        {photos.map((photo) => (
           <Grid item xs={12} md={6} key={photo._id}>
             <Card variant="outlined">
               <CardMedia
@@ -32,7 +62,7 @@ class UserPhotos extends React.Component {
                 <Typography variant="body2" color="textSecondary" component="p">
                   {photo.date_time}
                 </Typography>
-                {photo.comments.map(comment => (
+                {photo.comments && photo.comments.map((comment) => (
                   <div key={comment._id}>
                     <Link component={RouterLink} to={`/users/${comment.user._id}`}>
                       {`${comment.user.first_name} ${comment.user.last_name}`}
