@@ -10,6 +10,17 @@ class TopBar extends React.Component {
     super(props);
   }
 
+  componentDidMount() {
+    fetchModel('/test/info')
+      .then((response) => {
+        let version = response['data']['__v'];
+        this.setState({ version : version });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
+
   render() {
     let title;
     const location = this.props.location.pathname;
