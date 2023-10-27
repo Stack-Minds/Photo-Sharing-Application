@@ -1,3 +1,36 @@
+/**
+ * This builds on the webServer of previous projects in that it exports the
+ * current directory via webserver listing on a hard code (see portno below)
+ * port. It also establishes a connection to the MongoDB named 'project6'.
+ *
+ * To start the webserver run the command:
+ *    node webServer.js
+ *
+ * Note that anyone able to connect to localhost:portNo will be able to fetch
+ * any file accessible to the current user in the current directory or any of
+ * its children.
+ *
+ * This webServer exports the following URLs:
+ * /            - Returns a text status message. Good for testing web server
+ *                running.
+ * /test        - Returns the SchemaInfo object of the database in JSON format.
+ *                This is good for testing connectivity with MongoDB.
+ * /test/info   - Same as /test.
+ * /test/counts - Returns the population counts of the cs collections in the
+ *                database. Format is a JSON object with properties being the
+ *                collection name and the values being the counts.
+ *
+ * The following URLs need to be changed to fetch there reply values from the
+ * database:
+ * /user/list         - Returns an array containing all the User objects from
+ *                      the database (JSON format).
+ * /user/:id          - Returns the User object with the _id of id (JSON
+ *                      format).
+ * /photosOfUser/:id  - Returns an array with all the photos of the User (id).
+ *                      Each photo should have all the Comments on the Photo
+ *                      (JSON format).
+ */
+
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
@@ -116,43 +149,55 @@ app.get("/user/:id", function (request, response) {
   });
 });
 
-app.get("/photosOfUser/:id", function (request, response) {
+app.get('/photosOfUser/:id', function (request, response) {
   const id = request.params.id;
-  // Use Mongoose to fetch photos of a specific user by ID
-  Photo.find({ user_id: id }, function (err, photos) {
-    if (err) {
-      response.status(500).send(JSON.stringify(err));
-      return;
-    }
-    if (photos.length === 0) {
-      response.status(400).send("Photos for the user not found");
-      return;
-    }
+  
+  Photo.find( {user_id: id}, function (err, photos) {
+      if (err !== null) {
+          response.status(400).send("ERROR");
+          // return;
+      } else if (photos.length === 0) {
+          response.status(400).send("NO SUCH PHOTOS");
+          // return;
+      } else {
+          var functionStack = [];
+          var info = JSON.parse(JSON.stringify(photos));
+          for (var i = 0; i < info.length; i++) {
+              delete info[i].__v;
+              var comments = info[i].comments;
 
-    // Asynchronously fetch comments for each photo
-    async.map(
-      photos,
-      function (photo, callback) {
-        // Use Mongoose to fetch comments for each photo
-        const photoId = photo._id;
-        Photo.populate(photo, { path: "comments.user_id", select: "_id first_name last_name" }, function (err, populatedPhoto) {
-          if (err) {
-            callback(err, null);
-          } else {
-            callback(null, populatedPhoto);
+              comments.forEach(function (comment) {
+                  var uid = comment.user_id;
+                  functionStack.push(function (callback) {
+                      User.findOne({
+                          _id: uid
+                      }, function (err1, result) {
+                          if (err1 !== null) {
+                              response.status(400).send("ERROR");
+                          } else {
+                              var userInfo = JSON.parse(JSON.stringify(result));
+                              var user = {
+                                  _id: uid,
+                                  first_name: userInfo.first_name,
+                                  last_name: userInfo.last_name
+                              };
+                              comment.user = user;
+                          }
+                          callback();
+                      });
+                  });
+                  delete comment.user_id;
+              });
+
           }
-        });
-      },
-      function (err, results) {
-        if (err) {
-          response.status(500).send(JSON.stringify(err));
-        } else {
-          response.status(200).send(JSON.stringify(results));
-        }
+
+          async.parallel(functionStack, function () {
+              response.status(200).send(info);
+          });
       }
-    );
   });
 });
+
 
 const server = app.listen(3000, function () {
   const port = server.address().port;
