@@ -3,30 +3,23 @@ import {
   AppBar, Toolbar, Typography
 } from '@mui/material';
 import './TopBar.css';
+import axios from 'axios';
 
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      app_info: undefined
-    };
+    this.state = { version: null };
   }
 
   componentDidMount() {
-    this.handleAppInfoChange();
-}
-
-  handleAppInfoChange(){
-      const app_info = this.state.app_info;
-      if (app_info === undefined){
-          axios.get("/test/info")
-              .then((response) =>
-              {
-                  this.setState({
-                      app_info: response.data
-                  });
-              });
-      }
+    axios.get('/test/info')
+      .then((response) => {
+        let version = response.data.__v;
+        this.setState({ version: version });
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   render() {
