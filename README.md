@@ -10,3 +10,5 @@ Venkata Avinash Mallampati
 - Adarsh Kodumuru
 - Sai Pallavi Vangala
 - Supraj Bejugam
+
+# Please extract the files in Project6 - Copy in case if the code in the main branch is showing any errors.
