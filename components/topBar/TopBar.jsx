@@ -3,12 +3,13 @@ import {
   AppBar, Toolbar, Typography
 } from '@mui/material';
 import './TopBar.css';
-import fetchModel from '../../lib/fetchModelData.js';
 
 class TopBar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { version: null };
+    this.state = {
+      app_info: undefined
+    };
   }
 
   componentDidMount() {
