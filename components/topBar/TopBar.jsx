@@ -12,14 +12,20 @@ class TopBar extends React.Component {
   }
 
   componentDidMount() {
-    fetchModel('/test/info')
-      .then((response) => {
-        let version = response.data.__v;
-        this.setState({ version: version });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    this.handleAppInfoChange();
+}
+
+  handleAppInfoChange(){
+      const app_info = this.state.app_info;
+      if (app_info === undefined){
+          axios.get("/test/info")
+              .then((response) =>
+              {
+                  this.setState({
+                      app_info: response.data
+                  });
+              });
+      }
   }
 
   render() {
