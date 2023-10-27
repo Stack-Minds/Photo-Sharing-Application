@@ -23,6 +23,19 @@ class UserDetail extends React.Component {
     this._isMounted = false;
   }
 
+  handleUserChange(user_id){
+    axios.get("/user/" + user_id)
+        .then((response) =>
+        {
+            const new_user = response.data;
+            this.setState({
+                user: new_user
+            });
+            const main_content = "User Details for " + new_user.first_name + " " + new_user.last_name;
+            this.props.changeMainContent(main_content);
+        });
+  }
+
   componentDidUpdate() {
     const new_user_id = this.props.match.params.userId;
     const current_user_id = this.state.user?._id;
