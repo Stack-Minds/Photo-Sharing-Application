@@ -11,12 +11,12 @@ class UserDetail extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { user: {} };
+    this.state = { user: undefined };
   }
 
   componentDidMount() {
-    this._isMounted = true;
-    this.componentDidUpdate();
+    const new_user_id = this.props.match.params.userId;
+    this.handleUserChange(new_user_id);
   }
 
   componentWillUnmount() {
