@@ -12,7 +12,8 @@ const commentSchema = new mongoose.Schema({
   date_time: { type: Date, default: Date.now },
   // The ID of the user who created the comment.
   user_id: mongoose.Schema.Types.ObjectId,
-});
+},
+{ versionKey: false });
 
 /**
  * Define the Mongoose Schema for a Photo.
@@ -26,7 +27,8 @@ const photoSchema = new mongoose.Schema({
   user_id: mongoose.Schema.Types.ObjectId,
   // Array of comment objects representing the comments made on this photo.
   comments: [commentSchema],
-});
+},
+{ versionKey: false });
 
 /**
  * Create a Mongoose Model for a Photo using the photoSchema.
