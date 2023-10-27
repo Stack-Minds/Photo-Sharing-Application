@@ -24,17 +24,11 @@ class UserDetail extends React.Component {
   }
 
   componentDidUpdate() {
-    let userId = this.props.match.params.userId;
-    fetchModel(`/user/${userId}`)
-      .then((response) => {
-        if (this._isMounted) {
-          let user = response.data;
-          this.setState({ user: user });
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const new_user_id = this.props.match.params.userId;
+    const current_user_id = this.state.user?._id;
+    if (current_user_id  !== new_user_id){
+        this.handleUserChange(new_user_id);
+    }
   }
 
   render() {
