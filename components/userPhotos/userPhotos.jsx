@@ -3,7 +3,7 @@ import {
   Typography, Grid, Card, CardContent, CardMedia, Link
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import fetchModel from '../../lib/fetchModelData.js';
+import axios from 'axios';
 
 class UserPhotos extends React.Component {
   constructor(props) {
@@ -20,7 +20,8 @@ class UserPhotos extends React.Component {
 
   fetchUserData() {
     const userId = this.props.match.params.userId;
-    fetchModel(`/user/${userId}`)
+
+    axios.get(`/user/${userId}`)
       .then((response) => {
         const user = response.data;
         this.setState({ user });
@@ -29,7 +30,7 @@ class UserPhotos extends React.Component {
         console.error('Error fetching user data:', error);
       });
 
-    fetchModel(`/photosOfUser/${userId}`)
+    axios.get(`/photosOfUser/${userId}`)
       .then((response) => {
         const photos = response.data;
         this.setState({ photos });
@@ -49,7 +50,7 @@ class UserPhotos extends React.Component {
     return (
       <Grid container spacing={2}>
         {photos.map((photo) => (
-          <Grid item xs={12} md={6} key={photo._id}>
+          <Grid item xs={12} md={6} key={photo._id}> {/* Add a key prop here */}
             <Card variant="outlined">
               <CardMedia
                 component="img"
@@ -63,10 +64,12 @@ class UserPhotos extends React.Component {
                   {photo.date_time}
                 </Typography>
                 {photo.comments && photo.comments.map((comment) => (
-                  <div key={comment._id}>
-                    <Link component={RouterLink} to={`/users/${comment.user._id}`}>
-                      {`${comment.user.first_name} ${comment.user.last_name}`}
-                    </Link>
+                  <div key={comment._id}> {/* Add a key prop here */}
+                    {comment.user && (
+                      <Link component={RouterLink} to={`/users/${comment.user._id}`}>
+                        {`${comment.user.first_name} ${comment.user.last_name}`}
+                      </Link>
+                    )}
                     <Typography variant="body2" color="textSecondary" component="p">
                       {comment.date_time}: {comment.comment}
                     </Typography>
