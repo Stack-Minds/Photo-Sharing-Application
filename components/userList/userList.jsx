@@ -15,20 +15,28 @@ class UserList extends Component {
     this.fetchUserList();
   }
 
-  fetchUserList() {
-    axios.get('/user/list')
-      .then((response) => {
-        const users = response.data;
-        this.setState({ users });
-      })
-      .catch((error) => {
-        console.error('Error fetching user list:', error);
-      });
+  componentDidUpdate() {
+    const new_user_id = this.props.match?.params.userId;
+    const current_user_id = this.state.user_id;
+    if (current_user_id  !== new_user_id){
+      this.fetchUser(new_user_id);
+    }
   }
 
-  addUserName(user) {
-    if (!user) return '';
-    return user.first_name + ' ' + user.last_name;
+  fetchUser(user_id){
+    this.setState({
+      user_id: user_id
+    });
+  }
+
+  fetchUserList(){
+      axios.get("/user/list")
+        .then((response) =>
+          {
+              this.setState({
+              userListModel: response.data
+          });
+        });
   }
 
   render() {
