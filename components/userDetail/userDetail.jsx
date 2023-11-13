@@ -40,28 +40,71 @@ class UserDetail extends React.Component {
   }
 
   render() {
-    return this.state.user ? (
-      <Card variant="outlined">
-        <CardContent>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography variant="h5">{`${this.state.user.first_name} ${this.state.user.last_name}`}</Typography>
+    const { user } = this.state;
+    const topNameValue = user ? `User details for ${user.first_name} ${user.last_name}` : '';
+    return (
+      <div>
+        <TopBar topName={topNameValue} />
+        {user ? (
+          <div>
+            <Grid container justifyContent="space-between">
+              <Grid item>
+                <Button component={Link} to={`/photos/${user._id}`} variant="contained" color="primary">
+                  User Photos
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <Typography variant="body1">Location: {this.state.user.location}</Typography>
-              <Typography variant="body1">Description: {this.state.user.description}</Typography>
-              <Typography variant="body1">Occupation: {this.state.user.occupation}</Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Button component={RouterLink} to={`/photos/${this.state.user._id}`}>
-                View Photos
-              </Button>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-    ) : (
-        <div/>
+
+            <div className="user-detail-box" style={{ marginTop: '16px' }}>
+              <Typography variant="body1" className="user-detail-title">
+                First Name
+              </Typography>
+              <Typography variant="body1" className="user-detail-value">
+                {user.first_name}
+              </Typography>
+            </div>
+
+            {/* Include other user details here */}            
+
+            <div className="user-detail-box">
+              <Typography variant="body1" className="user-detail-title">
+                Last Name
+              </Typography>
+              <Typography variant="body1" className="user-detail-value">
+                {user.last_name}
+              </Typography>
+            </div>
+            <div className="user-detail-box">
+              <Typography variant="body1" className="user-detail-title">
+                Location
+              </Typography>
+              <Typography variant="body1" className="user-detail-value">
+                {user.location}
+              </Typography>
+            </div>
+            <div className="user-detail-box">
+              <Typography variant="body1" className="user-detail-title">
+                Description
+              </Typography>
+              <Typography variant="body1" className="user-detail-value">
+                {user.description}
+              </Typography>
+            </div>
+            <div className="user-detail-box">
+              <Typography variant="body1" className="user-detail-title">
+                Occupation
+              </Typography>
+              <Typography variant="body1" className="user-detail-value">
+                {user.occupation}
+              </Typography>
+            </div>
+          </div>
+        ) : (
+          <Typography variant="body1" className="user-detail-box loading-text">
+            Loading user details...
+          </Typography>
+        )}
+      </div>
     );
   }
 }
