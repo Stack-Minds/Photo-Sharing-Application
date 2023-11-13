@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Typography, Grid, Card, CardContent, Link
+  Typography, Grid, Card, CardContent, Link, TextField, Button
 } from '@mui/material';
 import './userDetail.css';
 import { Link as RouterLink } from 'react-router-dom';
@@ -14,28 +14,34 @@ class UserDetail extends React.Component {
     this.state = { user: {} };
   }
 
-  componentDidMount() {
-    this._isMounted = true;
-    this.componentDidUpdate();
-  }
-
   componentWillUnmount() {
     this._isMounted = false;
   }
 
-  componentDidUpdate() {
-    let userId = this.props.match.params.userId;
+  componentDidMount() {
+    const newId = this.props.match.params.userId;
+    this.handleUserChange(newId);
+}
 
-    axios.get(`/user/${userId}`)
-      .then((response) => {
-        if (this._isMounted) {
-          let user = response.data;
-          this.setState({ user: user });
-        }
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+  componentDidUpdate() {
+    const newId = this.props.match.params.userId;
+    const currentId = this.state.userDetails?._id;
+    if (currentId  !== newId){
+        this.handleUserChange(newId);
+    }
+  }
+
+  handleUserChange(userId){
+    axios.get("/user/" + userId)
+        .then((response) =>
+        {
+            const newUser = response.data;
+            this.setState({
+                userDetails: newUser
+            });
+            const main_content = "User Details " + newUser.first_name + " " + newUser.last_name;
+            this.props.changeTopbarContent(main_content);
+        });
   }
 
   render() {
