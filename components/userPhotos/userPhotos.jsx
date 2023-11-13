@@ -15,29 +15,34 @@ class UserPhotos extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchUserData();
+    const newUserId = this.props.match.params.userId;
+    this.fetchUser(newUserId);
   }
 
-  fetchUserData() {
-    const userId = this.props.match.params.userId;
+  componentDidUpdate() {
+    const newId = this.props.match.params.userId;
+    const current_user_id = this.state.userId;
+    if (current_user_id  !== newId){
+        this.fetchUser(newId);
+    }
+  }
 
-    axios.get(`/user/${userId}`)
-      .then((response) => {
-        const user = response.data;
-        this.setState({ user });
-      })
-      .catch((error) => {
-        console.error('Error fetching user data:', error);
-      });
-
-    axios.get(`/photosOfUser/${userId}`)
-      .then((response) => {
-        const photos = response.data;
-        this.setState({ photos });
-      })
-      .catch((error) => {
-        console.error('Error fetching user photos:', error);
-      });
+  fetchUser(userId){
+    axios.get("/photosOfUser/" + userId)
+        .then((response) =>
+        {
+            this.setState({
+                userId : userId,
+                userPhotosDetails: response.data
+            });
+        });
+    axios.get("/user/" + userId)
+        .then((response) =>
+        {
+            const new_user = response.data;
+            const main_content = "User Photos for " + new_user.first_name + " " + new_user.last_name;
+            this.props.changeTopbarContent(main_content);
+        });
   }
 
   render() {
